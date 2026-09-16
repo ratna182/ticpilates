@@ -12,30 +12,8 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const statusFilter = searchParams.get('status') || 'all';
 
-    const where: any = {};
-    if (statusFilter !== 'all') {
-      const now = new Date();
-      if (statusFilter === 'active') {
-        where.status = 'active';
-        where.validUntil = { gt: now };
-        where.OR = [
-          { usageLimit: null },
-          { usageLimit: { gt: prisma.promoCode.fields.usageCount } },
-        ];
-      } else if (statusFilter === 'expired') {
-        where.OR = [
-          { validUntil: { lt: now } },
-          { AND: [{ usageLimit: { not: null } }] },
-        ];
-      }
-    }
-
     const promoCodes = await prisma.promoCode.findMany({
-      where: statusFilter === 'all' ? {} : statusFilter === 'active' ? {
-        status_computed: undefined,
-        validUntil: { gt: new Date() },
-        validFrom: { lte: new Date() },
-      } : {},
+      where: {},
       orderBy: { createdAt: 'desc' },
       include: {
         _count: { select: { transactions: true } },
