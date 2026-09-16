@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Plus Jakarta Sans", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --bg-sand: #FAF8F5;
+  --bg-card: #FFFFFF;
+  --text-dark: #1C2427;
+  --text-muted: #667085;
+  --primary-sage: #2D6A4F;
+  --primary-sage-hover: #1E4633;
+  --primary-sage-light: #EBF7EE;
+  --border-soft: #EAE6DF;
+  --accent-gold: #C08A3E;
+  --accent-gold-light: #FDF4E7;
+}
+
+body {
+  background-color: var(--bg-sand);
+  color: var(--text-dark);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom aesthetic utility classes */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(234, 230, 223, 0.8);
+}
+
+.subtle-shadow {
+  box-shadow: 0 4px 20px -2px rgba(28, 36, 39, 0.05), 0 2px 6px -1px rgba(28, 36, 39, 0.02);
+}
+
+.card-hover {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -4px rgba(28, 36, 39, 0.08), 0 4px 10px -2px rgba(28, 36, 39, 0.03);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F1ECE4;
+}
+::-webkit-scrollbar-thumb {
+  background: #D1C9BE;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B4AA9D;
+}

@@ -1,0 +1,225 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Branch {
+  id            String         @id @default(cuid())
+  name          String
+  address       String?
+  phone         String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  adminUsers    AdminUser[]
+  services      Service[]
+  instructors   Instructor[]
+  classSessions ClassSession[]
+  pricingPlans  PricingPlan[]
+  clients       Client[]
+  transactions  Transaction[]
+  promoCodes    PromoCode[]
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  branchId     String?
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("admin") // "admin" / "owner"
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  branch       Branch?  @relation(fields: [branchId], references: [id], onDelete: SetNull)
+}
+
+model Service {
+  id              String         @id @default(cuid())
+  branchId        String
+  name            String
+  type            String         // "group" | "private"
+  durationMin     Int            // e.g. 50, 60
+  defaultCapacity Int            // e.g. 6, 1
+  description     String?
+  active          Boolean        @default(true)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  branch          Branch         @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  classSessions   ClassSession[]
+}
+
+model Instructor {
+  id            String         @id @default(cuid())
+  branchId      String
+  name          String
+  phone         String?
+  bio           String?
+  photoUrl      String?
+  active        Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  branch        Branch         @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  classSessions ClassSession[]
+}
+
+model ClassSession {
+  id           String       @id @default(cuid())
+  branchId     String
+  serviceId    String
+  instructorId String
+  startTime    DateTime
+  endTime      DateTime
+  capacity     Int
+  status       String       @default("scheduled") // "scheduled" | "cancelled" | "completed"
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  branch       Branch       @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  service      Service      @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+  instructor   Instructor   @relation(fields: [instructorId], references: [id], onDelete: Restrict)
+  bookings     Booking[]
+}
+
+model PricingPlan {
+  id           String             @id @default(cuid())
+  branchId     String
+  name         String
+  type         String             // "single" | "bundle" | "membership"
+  price        Float
+  sessionCount Int?               // null for unlimited membership
+  durationDays Int?               // validity days
+  active       Boolean            @default(true)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  branch       Branch             @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  memberships  ClientMembership[]
+  transactions Transaction[]
+}
+
+model Client {
+  id           String             @id @default(cuid())
+  branchId     String
+  name         String
+  phone        String
+  email        String?
+  notes        String?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  branch       Branch             @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  bookings     Booking[]
+  memberships  ClientMembership[]
+  transactions Transaction[]
+  notifications Notification[]
+  feedback     Feedback[]
+}
+
+model ClientMembership {
+  id            String      @id @default(cuid())
+  clientId      String
+  pricingPlanId String
+  sessionsLeft  Int?
+  validUntil    DateTime?
+  status        String      @default("active") // "active" | "expired" | "exhausted"
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  client        Client      @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  pricingPlan   PricingPlan @relation(fields: [pricingPlanId], references: [id], onDelete: Restrict)
+}
+
+model Booking {
+  id             String        @id @default(cuid())
+  clientId       String
+  classSessionId String
+  status         String        @default("pending") // "pending" | "confirmed" | "cancelled" | "checked-in"
+  qrCode         String        @unique
+  heldUntil      DateTime?
+  transactionId  String?       @unique
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  client         Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  classSession   ClassSession  @relation(fields: [classSessionId], references: [id], onDelete: Restrict)
+  transaction    Transaction?  @relation(fields: [transactionId], references: [id], onDelete: SetNull)
+}
+
+model Transaction {
+  id            String       @id @default(cuid())
+  branchId      String
+  clientId      String
+  amount        Float
+  method        String       // "online" | "cash" | "transfer" | "qris"
+  status        String       @default("pending") // "pending" | "paid" | "failed"
+  promoCodeId   String?
+  pricingPlanId String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  branch        Branch       @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  client        Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  promoCode     PromoCode?   @relation(fields: [promoCodeId], references: [id], onDelete: SetNull)
+  pricingPlan   PricingPlan? @relation(fields: [pricingPlanId], references: [id], onDelete: SetNull)
+  invoice       Invoice?
+  booking       Booking?
+}
+
+model Invoice {
+  id            String      @id @default(cuid())
+  transactionId String      @unique
+  invoiceNumber String      @unique
+  issuedAt      DateTime    @default(now())
+  pdfUrl        String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+}
+
+model PromoCode {
+  id            String        @id @default(cuid())
+  branchId      String
+  code          String        @unique
+  discountType  String        // "percent" | "fixed"
+  discountValue Float
+  validFrom     DateTime
+  validUntil    DateTime
+  usageLimit    Int?
+  usageCount    Int           @default(0)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  branch        Branch        @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  transactions  Transaction[]
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  clientId  String
+  channel   String   // "wa" | "email"
+  type      String   // "reminder" | "promo" | "booking_confirmation"
+  message   String
+  sentAt    DateTime @default(now())
+  status    String   @default("sent") // "sent" | "failed"
+  createdAt DateTime @default(now())
+
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+}
+
+model Feedback {
+  id        String   @id @default(cuid())
+  clientId  String
+  rating    Int      // 1 to 5
+  comment   String?
+  createdAt DateTime @default(now())
+
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+}
