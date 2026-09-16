@@ -9,11 +9,13 @@ async function main() {
   // 1. Default Branch
   const branch = await prisma.branch.upsert({
     where: { id: 'branch-kemang-01' },
-    update: {},
+    update: {
+      address: 'Jl. Menteng III No.1, Pd. Ranji, Kec. Ciputat Tim., Kota Tangerang Selatan, Banten 15412',
+    },
     create: {
       id: 'branch-kemang-01',
       name: 'TICPILATES Kemang Studio',
-      address: 'Jl. Kemang Raya No. 18, Mampang Prapatan, Jakarta Selatan',
+      address: 'Jl. Menteng III No.1, Pd. Ranji, Kec. Ciputat Tim., Kota Tangerang Selatan, Banten 15412',
       phone: '0812-9876-5432',
     },
   });

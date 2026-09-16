@@ -18,7 +18,7 @@ export default function SettingsPage() {
 
   const [studioForm, setStudioForm] = useState({
     name: 'TICPILATES',
-    address: 'Jl. Kemang Raya No. 99, Jakarta Selatan 12730',
+    address: 'Jl. Menteng III No.1, Pd. Ranji, Kec. Ciputat Tim., Kota Tangerang Selatan, Banten 15412',
     phone: '0812-3456-7890',
     website: 'https://ticpilates.com',
     openHour: '07:00',

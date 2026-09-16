@@ -232,7 +232,7 @@ export default async function BookingTicketPage({
           <div className="text-center text-[11px] text-[#667085] leading-relaxed">
             <span className="font-semibold text-[#1C2427]">TICPILATES Kemang Studio</span>
             <br />
-            Jl. Kemang Raya No. 18, Jakarta Selatan (Telp: 0812-9876-5432)
+            Jl. Menteng III No.1, Pd. Ranji, Kec. Ciputat Tim., Kota Tangerang Selatan, Banten 15412 (Telp: 0812-9876-5432)
             <br />
             Harap tiba 10 menit sebelum kelas dimulai mengenakan grip socks.
           </div>

@@ -225,7 +225,7 @@ export default async function OnlineStorePage() {
       <footer className="py-6 px-6 border-t border-[#EAE6DF] bg-white text-center text-xs text-[#667085] mt-12">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
           <div>TICPILATES Online Store — Sistem Pemesanan Kelas Pilates Mandiri</div>
-          <div>Alamat: Jl. Kemang Raya No. 18, Jakarta Selatan</div>
+          <div>Alamat: Jl. Menteng III No.1, Pd. Ranji, Kec. Ciputat Tim., Kota Tangerang Selatan, Banten 15412</div>
         </div>
       </footer>
     </div>
