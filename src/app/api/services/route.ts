@@ -94,8 +94,8 @@ export async function PUT(req: NextRequest) {
       data: {
         ...(name && { name: name.trim() }),
         ...(type && { type }),
-        ...(durationMin && { durationMin: parseInt(durationMin, 10) }),
-        ...(defaultCapacity && { defaultCapacity: parseInt(defaultCapacity, 10) }),
+        ...(durationMin !== undefined && { durationMin: parseInt(durationMin, 10) }),
+        ...(defaultCapacity !== undefined && { defaultCapacity: parseInt(defaultCapacity, 10) }),
         ...(description !== undefined && { description: description?.trim() || null }),
         ...(active !== undefined && { active: Boolean(active) }),
       },

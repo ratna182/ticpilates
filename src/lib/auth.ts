@@ -2,7 +2,7 @@ import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 
 const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'ticpilates_super_secret_jwt_key_2026_studio_secure'
+  process.env.JWT_SECRET ?? (() => { throw new Error('JWT_SECRET environment variable is required'); })()
 );
 
 export const COOKIE_NAME = 'ticpilates_session';
